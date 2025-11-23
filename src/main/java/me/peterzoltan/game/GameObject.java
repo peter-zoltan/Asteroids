@@ -6,6 +6,6 @@ public class GameObject {
 
     int id;
 
-    Point coordinate;
+    protected Point coordinate;
 
 }
