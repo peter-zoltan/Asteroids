@@ -5,9 +5,11 @@ import me.peterzoltan.game.MyCanvas;
 import me.peterzoltan.game.object.Asteroid;
 import me.peterzoltan.game.object.SpaceShip;
 
+import static java.lang.Thread.sleep;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         GameFrame frame = new GameFrame("Game");
         frame.setVisible(true);
 
@@ -15,7 +17,10 @@ public class Main {
         frame.add(canvas);
         canvas.setSize(frame.getWidth(), frame.getHeight());
         canvas.add(new SpaceShip());
-        canvas.paint(canvas.getGraphics());
+        while (true) {
+            sleep(50);
+            canvas.paint(canvas.getGraphics());
+        }
     }
 
 }
