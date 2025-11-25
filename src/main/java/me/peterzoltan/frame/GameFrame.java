@@ -11,8 +11,6 @@ public class GameFrame extends JFrame implements KeyListener {
 
     MyCanvas canvas;
     SpaceShip spaceShip;
-    Thread graphicsThread;
-    Thread positionThread;
 
     public GameFrame(String title) {
         super(title);
