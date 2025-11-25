@@ -40,11 +40,12 @@ public class GameFrame extends JFrame implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int x = spaceShip.getLocation().x;
         int y = spaceShip.getLocation().y;
+        int orientation = spaceShip.getOrientation();
         switch (e.getKeyCode()) {
             case KeyEvent.VK_W -> spaceShip.setLocation(x, y - 20);
             case KeyEvent.VK_S -> spaceShip.setLocation(x, y + 20);
-            case KeyEvent.VK_A -> spaceShip.setLocation(x - 20, y);
-            case KeyEvent.VK_D -> spaceShip.setLocation(x + 20, y);
+            case KeyEvent.VK_A -> spaceShip.setOrientation(orientation + 20);
+            case KeyEvent.VK_D -> spaceShip.setOrientation(orientation - 20);
         }
     }
 

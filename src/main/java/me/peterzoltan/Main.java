@@ -1,7 +1,6 @@
 package me.peterzoltan;
 
 import me.peterzoltan.frame.GameFrame;
-import java.awt.*;
 
 public class Main {
 

@@ -27,4 +27,17 @@ public class SpaceShip extends MovableGameObject implements Drawable {
         graphics.drawImage(image, coordinate.x, coordinate.y, null);
     }
 
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(int o) {
+        orientation = o;
+        if (orientation < 0) {
+            orientation = 360 + orientation;
+        } else if (orientation > 360) {
+            orientation = orientation - 360;
+        }
+    }
+
 }
