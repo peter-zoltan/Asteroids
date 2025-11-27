@@ -33,17 +33,26 @@ public class GameFrame extends JFrame implements KeyListener {
         new Timer(tick, e -> {
             int x = spaceShip.getLocation().x;
             int y = spaceShip.getLocation().y;
+            int orientation = spaceShip.getOrientation();
             int xOffset = 0;
             int yOffset = 0;
+            int orientationOffset = 0;
             for (Integer keyCode : pressedKeys) {
                 switch (keyCode) {
-                    case KeyEvent.VK_W -> yOffset -= 20;
-                    case KeyEvent.VK_S -> yOffset += 20;
-                    case KeyEvent.VK_A -> xOffset -= 20;
-                    case KeyEvent.VK_D -> xOffset += 20;
+                    case KeyEvent.VK_W -> {
+                        xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 20);
+                        yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 20);
+                    }
+                    case KeyEvent.VK_S -> {
+                        xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 20);
+                        yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 20);
+                    }
+                    case KeyEvent.VK_A -> orientationOffset -= 20;
+                    case KeyEvent.VK_D -> orientationOffset += 20;
                 }
             }
             spaceShip.setLocation(x + xOffset, y + yOffset);
+            spaceShip.setOrientation(orientation + orientationOffset);
             canvas.repaint();
         }).start();
     }

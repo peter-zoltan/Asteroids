@@ -21,12 +21,10 @@ public class SpaceShip extends MovableGameObject implements Drawable {
     int orientation;
 
     public SpaceShip() {
-        /*image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        ImageIcon icon = new ImageIcon("src/main/resources/spaceship.png");
-        image.createGraphics().drawImage(icon.getImage().getScaledInstance(64, 64, SCALE_SMOOTH), 0, 0, null);*/
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
         } catch (IOException e) {
+            System.out.println("Error loading image");
         }
         setLocation(100, 100);
     }
