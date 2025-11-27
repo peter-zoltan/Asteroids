@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MyCanvas extends JPanel {
@@ -25,6 +26,7 @@ public class MyCanvas extends JPanel {
     public void addDrawable(Drawable drawable) {
         drawables.add(drawable);
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {

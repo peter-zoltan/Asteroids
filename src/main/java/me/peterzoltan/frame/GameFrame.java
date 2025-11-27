@@ -1,18 +1,27 @@
 package me.peterzoltan.frame;
 
+import me.peterzoltan.game.Movable;
 import me.peterzoltan.game.MyCanvas;
+import me.peterzoltan.game.object.Asteroid;
+import me.peterzoltan.game.object.Planet;
+import me.peterzoltan.game.object.Projectile;
 import me.peterzoltan.game.object.SpaceShip;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameFrame extends JFrame implements KeyListener {
 
     MyCanvas canvas;
-    SpaceShip spaceShip;
+    SpaceShip spaceShip;    // initiated later
+    Planet planet;
+    List<Asteroid> asteroids = new ArrayList<Asteroid>();
+    List<Projectile> projectiles = new ArrayList<Projectile>();
     private final Set<Integer> pressedKeys = new HashSet<>();
     public static int tick = 16;
 
@@ -24,13 +33,37 @@ public class GameFrame extends JFrame implements KeyListener {
     }
 
     public void init() {
-        spaceShip = new SpaceShip();
-        canvas = new MyCanvas(getWidth(), getHeight());
+
+        planet = new Planet(getContentPane().getWidth() * 3 / 4, getContentPane().getHeight() / 2);
+        spaceShip = new SpaceShip(spaceShipMovement);
+
+        canvas = new MyCanvas(getContentPane().getWidth(), getContentPane().getHeight());
+        add(canvas);
         canvas.setFocusable(true);
         canvas.addKeyListener(this);
-        add(canvas);
+        canvas.addDrawable(planet);
         canvas.addDrawable(spaceShip);
+
         new Timer(tick, e -> {
+            updatePositions();
+            canvas.repaint();
+        }).start();
+
+    }
+
+    public void updatePositions() {
+        spaceShip.updatePosition();
+        for (Asteroid asteroid : asteroids) {
+            asteroid.updatePosition();
+        }
+        for (Projectile projectile : projectiles) {
+            projectile.updatePosition();
+        }
+    }
+
+    Movable spaceShipMovement = new Movable() {
+        @Override
+        public void updatePosition() {
             int x = spaceShip.getLocation().x;
             int y = spaceShip.getLocation().y;
             int orientation = spaceShip.getOrientation();
@@ -40,22 +73,21 @@ public class GameFrame extends JFrame implements KeyListener {
             for (Integer keyCode : pressedKeys) {
                 switch (keyCode) {
                     case KeyEvent.VK_W -> {
-                        xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 20);
-                        yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 20);
+                        xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 12);
+                        yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 12);
                     }
                     case KeyEvent.VK_S -> {
-                        xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 20);
-                        yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 20);
+                        xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 12);
+                        yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 12);
                     }
-                    case KeyEvent.VK_A -> orientationOffset -= 20;
-                    case KeyEvent.VK_D -> orientationOffset += 20;
+                    case KeyEvent.VK_A -> orientationOffset -= 10;
+                    case KeyEvent.VK_D -> orientationOffset += 10;
                 }
             }
             spaceShip.setLocation(x + xOffset, y + yOffset);
             spaceShip.setOrientation(orientation + orientationOffset);
-            canvas.repaint();
-        }).start();
-    }
+        }
+    };
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -69,4 +101,5 @@ public class GameFrame extends JFrame implements KeyListener {
     public void keyReleased(KeyEvent e) {
         pressedKeys.remove(e.getKeyCode());
     }
+
 }

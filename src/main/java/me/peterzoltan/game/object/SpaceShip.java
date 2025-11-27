@@ -1,7 +1,10 @@
 package me.peterzoltan.game.object;
 
 import me.peterzoltan.game.Drawable;
-import me.peterzoltan.game.MovableGameObject;
+import me.peterzoltan.game.GameObject;
+import me.peterzoltan.game.Movable;
+
+import static me.peterzoltan.util.ImageUtil.rotate;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,26 +14,23 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
 
-import static java.awt.Image.SCALE_SMOOTH;
-import static me.peterzoltan.util.ImageUtil.rotate;
-
-public class SpaceShip extends MovableGameObject implements Drawable {
+public class SpaceShip extends GameObject implements Drawable, Movable {
 
     BufferedImage image;
     int orientation;
+    Movable movement;
 
-    public SpaceShip() {
+    public SpaceShip(Movable movement) {
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
         } catch (IOException e) {
-            System.out.println("Error loading image");
+            System.out.println("Error loading spaceship");
         }
         setLocation(100, 100);
-    }
-
-    public Image getImage() {
-        return image;
+        this.movement = movement;
     }
 
     public void draw(Graphics graphics) {
@@ -52,6 +52,8 @@ public class SpaceShip extends MovableGameObject implements Drawable {
     }
 
     @Override
-    public void updatePosition() {}
+    public void updatePosition() {
+        movement.updatePosition();
+    }
 
 }

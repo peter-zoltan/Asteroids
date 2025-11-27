@@ -6,10 +6,12 @@ import me.peterzoltan.game.Movable;
 
 import java.awt.*;
 
-public class Asteroid extends GameObject implements Drawable, Movable {
+public class Projectile extends GameObject implements Drawable, Movable {
 
+    @Override
     public void draw(Graphics graphics) {
-        graphics.drawOval(100, 100, 50, 50);
+        graphics.setColor(Color.YELLOW);
+        graphics.drawOval(100, 100, 20, 20);
     }
 
     @Override
