@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static java.awt.Image.SCALE_SMOOTH;
+import static me.peterzoltan.util.ImageUtil.rotate;
 
 public class SpaceShip extends MovableGameObject implements Drawable {
 
@@ -54,20 +55,5 @@ public class SpaceShip extends MovableGameObject implements Drawable {
 
     @Override
     public void updatePosition() {}
-
-    public static BufferedImage rotate(BufferedImage img, double degrees)
-    {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
-
-        Graphics2D g2 = newImage.createGraphics();
-
-        g2.rotate(Math.toRadians(degrees), (double) width / 2, (double) height / 2);
-        g2.drawImage(img, null, 0, 0);
-
-        return newImage;
-    }
 
 }
