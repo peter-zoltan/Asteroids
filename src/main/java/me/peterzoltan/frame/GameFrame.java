@@ -6,11 +6,14 @@ import me.peterzoltan.game.object.SpaceShip;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameFrame extends JFrame implements KeyListener {
 
     MyCanvas canvas;
     SpaceShip spaceShip;
+    private final Set<Integer> pressedKeys = new HashSet<>();
 
     public GameFrame(String title) {
         super(title);
@@ -41,16 +44,22 @@ public class GameFrame extends JFrame implements KeyListener {
         int x = spaceShip.getLocation().x;
         int y = spaceShip.getLocation().y;
         int orientation = spaceShip.getOrientation();
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> spaceShip.setLocation(x, y - 20);
-            case KeyEvent.VK_S -> spaceShip.setLocation(x, y + 20);
-            case KeyEvent.VK_A -> spaceShip.setOrientation(orientation + 20);
-            case KeyEvent.VK_D -> spaceShip.setOrientation(orientation - 20);
+        int xOffset = 0;
+        int yOffset = 0;
+        pressedKeys.add(e.getKeyCode());
+        for (Integer keyCode : pressedKeys) {
+            switch (keyCode) {
+                case KeyEvent.VK_W -> yOffset -= 20;
+                case KeyEvent.VK_S -> yOffset += 20;
+                case KeyEvent.VK_A -> xOffset -= 20;
+                case KeyEvent.VK_D -> xOffset += 20;
+            }
         }
+        spaceShip.setLocation(x + xOffset, y + yOffset);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        pressedKeys.remove(e.getKeyCode());
     }
 }
