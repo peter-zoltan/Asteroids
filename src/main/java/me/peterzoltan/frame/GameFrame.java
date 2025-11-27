@@ -14,6 +14,7 @@ public class GameFrame extends JFrame implements KeyListener {
     MyCanvas canvas;
     SpaceShip spaceShip;
     private final Set<Integer> pressedKeys = new HashSet<>();
+    public static int tick = 16;
 
     public GameFrame(String title) {
         super(title);
@@ -29,7 +30,7 @@ public class GameFrame extends JFrame implements KeyListener {
         canvas.addKeyListener(this);
         add(canvas);
         canvas.addDrawable(spaceShip);
-        new Timer(16, e -> {
+        new Timer(tick, e -> {
             int x = spaceShip.getLocation().x;
             int y = spaceShip.getLocation().y;
             int xOffset = 0;
@@ -52,21 +53,7 @@ public class GameFrame extends JFrame implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        /*int x = spaceShip.getLocation().x;
-        int y = spaceShip.getLocation().y;
-        int orientation = spaceShip.getOrientation();
-        int xOffset = 0;
-        int yOffset = 0;*/
         pressedKeys.add(e.getKeyCode());
-        /*for (Integer keyCode : pressedKeys) {
-            switch (keyCode) {
-                case KeyEvent.VK_W -> yOffset -= 20;
-                case KeyEvent.VK_S -> yOffset += 20;
-                case KeyEvent.VK_A -> xOffset -= 20;
-                case KeyEvent.VK_D -> xOffset += 20;
-            }
-        }
-        spaceShip.setLocation(x + xOffset, y + yOffset);*/
     }
 
     @Override
