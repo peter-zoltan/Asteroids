@@ -5,6 +5,7 @@ import me.peterzoltan.game.MovableGameObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 import static java.awt.Image.SCALE_SMOOTH;
 
@@ -39,5 +40,8 @@ public class SpaceShip extends MovableGameObject implements Drawable {
             orientation = orientation - 360;
         }
     }
+
+    @Override
+    public void updatePosition() {}
 
 }
