@@ -36,6 +36,8 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
     public void draw(Graphics graphics) {
         BufferedImage rotated = rotate(image, orientation);
         graphics.drawImage(rotated, coordinate.x, coordinate.y, null);
+        graphics.drawOval(coordinate.x, coordinate.y, 64, 64);
+        graphics.drawRect(coordinate.x + 30, coordinate.y + 30, 5, 5);
     }
 
     public void setOrientation(int o) {
@@ -68,6 +70,10 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         }
         setLocation(coordinate.x + xOffset, coordinate.y + yOffset);
         setOrientation(orientation + orientationOffset);
+
+        for (Projectile projectile : projectiles) {
+            projectile.updatePosition();
+        }
     }
 
     public void updateProjectiles() {

@@ -44,7 +44,6 @@ public class GameFrame extends JFrame implements KeyListener {
         canvas.addDrawable(spaceShip);
 
         new Timer(tick, e -> {
-            spaceShip.updateProjectiles();
             for(Projectile projectile : spaceShip.projectiles) {
                 canvas.addDrawable(projectile);
             }
@@ -55,12 +54,10 @@ public class GameFrame extends JFrame implements KeyListener {
     }
 
     public void updatePositions() {
+        spaceShip.updateProjectiles();
         spaceShip.updatePosition();
         for (Asteroid asteroid : asteroids) {
             asteroid.updatePosition();
-        }
-        for (Projectile projectile : spaceShip.projectiles) {
-            projectile.updatePosition();
         }
     }
 

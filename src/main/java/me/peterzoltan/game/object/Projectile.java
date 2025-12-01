@@ -22,8 +22,8 @@ public class Projectile extends GameObject implements Drawable, Movable {
         }
         this.orientation = orientation;
         setLocation(
-            spaceShipX + 20 + (int) (Math.sin(Math.toRadians(orientation)) * 24),
-            spaceShipY + 20 - (int) (Math.cos(Math.toRadians(orientation)) * 24)
+            spaceShipX + 20,
+            spaceShipY + 20
         );
     }
 

@@ -25,6 +25,8 @@ public class Planet extends GameObject implements Drawable {
 
     public void draw(Graphics graphics) {
         graphics.drawImage(image, coordinate.x, coordinate.y, null);
+        graphics.drawOval(coordinate.x, coordinate.y, 256, 256);
+        graphics.drawRect(coordinate.x + 126, coordinate.y + 126, 5, 5);
     }
 
 }
