@@ -7,39 +7,35 @@ import me.peterzoltan.game.Movable;
 import static me.peterzoltan.util.ImageUtil.rotate;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Set;
 
 public class SpaceShip extends GameObject implements Drawable, Movable {
 
     BufferedImage image;
-    int orientation;
-    Movable movement;
+    Set<Integer> pressedKeys;
+    public List<Projectile> projectiles = new ArrayList<>();
+    long lastShot = 0;
 
-    public SpaceShip(Movable movement) {
+    public SpaceShip(Set<Integer> pressedKeys) {
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
         } catch (IOException e) {
             System.out.println("Error loading spaceship");
         }
         setLocation(100, 100);
-        this.movement = movement;
+        this.pressedKeys = pressedKeys;
     }
 
     public void draw(Graphics graphics) {
         BufferedImage rotated = rotate(image, orientation);
         graphics.drawImage(rotated, coordinate.x, coordinate.y, null);
-    }
-
-    public int getOrientation() {
-        return orientation;
     }
 
     public void setOrientation(int o) {
@@ -53,7 +49,38 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
 
     @Override
     public void updatePosition() {
-        movement.updatePosition();
+        int xOffset = 0;
+        int yOffset = 0;
+        int orientationOffset = 0;
+        for (Integer keyCode : pressedKeys) {
+            switch (keyCode) {
+                case KeyEvent.VK_W -> {
+                    xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 12);
+                    yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 12);
+                }
+                case KeyEvent.VK_S -> {
+                    xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 12);
+                    yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 12);
+                }
+                case KeyEvent.VK_A -> orientationOffset -= 10;
+                case KeyEvent.VK_D -> orientationOffset += 10;
+            }
+        }
+        setLocation(coordinate.x + xOffset, coordinate.y + yOffset);
+        setOrientation(orientation + orientationOffset);
+    }
+
+    public void updateProjectiles() {
+        if (pressedKeys.contains(KeyEvent.VK_SPACE) && System.currentTimeMillis() - lastShot > 128) {
+            projectiles.add(
+                new Projectile(
+                    coordinate.x,
+                    coordinate.y,
+                    orientation
+               )
+            );
+            lastShot = System.currentTimeMillis();
+        }
     }
 
 }

@@ -18,10 +18,9 @@ import java.util.Set;
 public class GameFrame extends JFrame implements KeyListener {
 
     MyCanvas canvas;
-    SpaceShip spaceShip;    // initiated later
+    SpaceShip spaceShip;
     Planet planet;
-    List<Asteroid> asteroids = new ArrayList<Asteroid>();
-    List<Projectile> projectiles = new ArrayList<Projectile>();
+    List<Asteroid> asteroids = new ArrayList<>();
     private final Set<Integer> pressedKeys = new HashSet<>();
     public static int tick = 16;
 
@@ -35,7 +34,7 @@ public class GameFrame extends JFrame implements KeyListener {
     public void init() {
 
         planet = new Planet(getContentPane().getWidth() * 3 / 4, getContentPane().getHeight() / 2);
-        spaceShip = new SpaceShip(spaceShipMovement);
+        spaceShip = new SpaceShip(pressedKeys);
 
         canvas = new MyCanvas(getContentPane().getWidth(), getContentPane().getHeight());
         add(canvas);
@@ -45,6 +44,10 @@ public class GameFrame extends JFrame implements KeyListener {
         canvas.addDrawable(spaceShip);
 
         new Timer(tick, e -> {
+            spaceShip.updateProjectiles();
+            for(Projectile projectile : spaceShip.projectiles) {
+                canvas.addDrawable(projectile);
+            }
             updatePositions();
             canvas.repaint();
         }).start();
@@ -56,38 +59,10 @@ public class GameFrame extends JFrame implements KeyListener {
         for (Asteroid asteroid : asteroids) {
             asteroid.updatePosition();
         }
-        for (Projectile projectile : projectiles) {
+        for (Projectile projectile : spaceShip.projectiles) {
             projectile.updatePosition();
         }
     }
-
-    Movable spaceShipMovement = new Movable() {
-        @Override
-        public void updatePosition() {
-            int x = spaceShip.getLocation().x;
-            int y = spaceShip.getLocation().y;
-            int orientation = spaceShip.getOrientation();
-            int xOffset = 0;
-            int yOffset = 0;
-            int orientationOffset = 0;
-            for (Integer keyCode : pressedKeys) {
-                switch (keyCode) {
-                    case KeyEvent.VK_W -> {
-                        xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 12);
-                        yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 12);
-                    }
-                    case KeyEvent.VK_S -> {
-                        xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 12);
-                        yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 12);
-                    }
-                    case KeyEvent.VK_A -> orientationOffset -= 10;
-                    case KeyEvent.VK_D -> orientationOffset += 10;
-                }
-            }
-            spaceShip.setLocation(x + xOffset, y + yOffset);
-            spaceShip.setOrientation(orientation + orientationOffset);
-        }
-    };
 
     @Override
     public void keyTyped(KeyEvent e) {}

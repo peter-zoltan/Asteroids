@@ -4,9 +4,9 @@ import java.awt.Point;
 
 public class GameObject {
 
-    public int id;
-
     protected Point coordinate = new Point();
+
+    protected int orientation;
 
     protected int radius;
 

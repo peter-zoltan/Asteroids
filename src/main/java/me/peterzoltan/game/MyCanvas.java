@@ -3,15 +3,14 @@ package me.peterzoltan.game;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 
 public class MyCanvas extends JPanel {
 
     private final Graphics2D graphics;
     private final BufferedImage image;
-    List<Drawable> drawables = new ArrayList<>();
+    Set<Drawable> drawables = new HashSet<>();
 
     public MyCanvas(int width, int height) {
         setSize(new Dimension(width, height));
