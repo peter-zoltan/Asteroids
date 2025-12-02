@@ -59,7 +59,6 @@ public class MenuFrame extends JFrame {
 
         initializeSettingsPanel();
 
-        // Button
         saveButton = new JButton("Save to JSON");
         saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         saveButton.addActionListener(saveListener);
@@ -71,7 +70,6 @@ public class MenuFrame extends JFrame {
 
         settingsPanel = new JPanel(new GridLayout(0, 2, 5, 5));
 
-        // Main fields
         settingsPanel.add(new JLabel("Name:"));
         nameField = new JTextField();
         settingsPanel.add(nameField);
@@ -84,7 +82,6 @@ public class MenuFrame extends JFrame {
         frequencyField = new JTextField();
         settingsPanel.add(frequencyField);
 
-        // Weight fields
         settingsPanel.add(new JLabel("Small Weight:"));
         smallWeightField = new JTextField();
         settingsPanel.add(smallWeightField);
@@ -144,7 +141,6 @@ public class MenuFrame extends JFrame {
             return;
         }
 
-        // Create new object
         JSONObject obj = new JSONObject();
         obj.put("name", nameField.getText());
         obj.put("hitpoints", hitpointsField.getText());
@@ -156,10 +152,8 @@ public class MenuFrame extends JFrame {
         weights.put("large", largeWeightField.getText());
         obj.put("weights", weights);
 
-        // Append to array
         jsonArray.put(obj);
 
-        // Save back to file
         try {
             Files.writeString((new File("config.json")).toPath(), jsonArray.toString(4));
             JOptionPane.showMessageDialog(null, "Saved to file!");
