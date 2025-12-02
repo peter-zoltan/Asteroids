@@ -8,12 +8,11 @@ import java.util.List;
 
 public class MyCanvas extends JPanel {
 
-    private final Graphics2D graphics;
-    private final BufferedImage image;
+    private Graphics2D graphics;
+    private BufferedImage image;
     List<Drawable> drawables = new ArrayList<>();
 
-    public MyCanvas(int width, int height) {
-        setSize(new Dimension(width, height));
+    public void init() {
         image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         graphics = image.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -24,6 +23,10 @@ public class MyCanvas extends JPanel {
 
     public void addDrawable(Drawable drawable) {
         drawables.add(drawable);
+    }
+
+    public void removeDrawable(Drawable drawable) {
+        drawables.remove(drawable);
     }
 
     public List<Drawable> getDrawables() {
@@ -49,6 +52,11 @@ public class MyCanvas extends JPanel {
     public void addNotify() {
         super.addNotify();
         requestFocusInWindow();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
 }

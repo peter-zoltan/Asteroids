@@ -39,10 +39,13 @@ public class Asteroid extends GameObject implements Drawable, Movable {
         }
         setLocation(x, y);
         this.orientation = orientation;
+        radius = image.getWidth() / 2;
     }
 
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, null);
+        graphics.drawImage(image, coordinate.x - radius, coordinate.y - radius, null);
+        graphics.drawOval(coordinate.x - radius, coordinate.y - radius, radius * 2, radius * 2);
+        graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
     }
 
     @Override
@@ -51,5 +54,17 @@ public class Asteroid extends GameObject implements Drawable, Movable {
             coordinate.x + (int) (Math.sin(Math.toRadians(orientation)) * 5),
             coordinate.y - (int) (Math.cos(Math.toRadians(orientation)) * 5)
         );
+    }
+
+    public void registerHit() {
+        durability--;
+    }
+
+    public boolean isDestroyed() {
+        return durability == 0;
+    }
+
+    public int getDamage() {
+        return durability;
     }
 }

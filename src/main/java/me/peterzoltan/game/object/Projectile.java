@@ -22,6 +22,7 @@ public class Projectile extends GameObject implements Drawable, Movable {
         }
         this.orientation = orientation;
         setLocation(spaceShipX, spaceShipY);
+        radius = image.getWidth() / 2;
     }
 
     @Override

@@ -22,6 +22,8 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
     Set<Integer> pressedKeys;
     public List<Projectile> projectiles = new ArrayList<>();
     long lastShot = 0;
+    long lastHit = 0;
+    long resetTime = 1000;
 
     public SpaceShip(Set<Integer> pressedKeys) {
         try {
@@ -31,13 +33,19 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         }
         setLocation(100, 100);
         setOrientation(0);
+        radius = image.getWidth() / 2;
         this.pressedKeys = pressedKeys;
     }
 
     public void draw(Graphics graphics) {
+        if (System.currentTimeMillis() - lastHit > resetTime) {
+            graphics.setColor(Color.GREEN);
+        } else {
+            graphics.setColor(Color.WHITE);
+        }
         BufferedImage rotated = rotate(image, orientation);
-        graphics.drawImage(rotated, coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, null);
-        graphics.drawOval(coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, 64, 64);
+        graphics.drawImage(rotated, coordinate.x - radius, coordinate.y - radius, null);
+        graphics.drawOval(coordinate.x - radius, coordinate.y - radius, radius * 2, radius * 2);
         graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
     }
 
@@ -78,6 +86,9 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
     }
 
     public void updateProjectiles() {
+        if (System.currentTimeMillis() - lastHit <= resetTime) {
+            return;
+        }
         if (pressedKeys.contains(KeyEvent.VK_SPACE) && System.currentTimeMillis() - lastShot > 128) {
             projectiles.add(
                 new Projectile(
@@ -88,6 +99,16 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
             );
             lastShot = System.currentTimeMillis();
         }
+    }
+
+    public void registerHit() {
+        if (System.currentTimeMillis() - lastHit > resetTime) {
+            lastHit = System.currentTimeMillis();
+        }
+    }
+
+    public boolean isEnabled() {
+        return System.currentTimeMillis() - lastHit > resetTime;
     }
 
 }
