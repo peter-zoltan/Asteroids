@@ -35,9 +35,9 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
 
     public void draw(Graphics graphics) {
         BufferedImage rotated = rotate(image, orientation);
-        graphics.drawImage(rotated, coordinate.x, coordinate.y, null);
-        graphics.drawOval(coordinate.x, coordinate.y, 64, 64);
-        graphics.drawRect(coordinate.x + 30, coordinate.y + 30, 5, 5);
+        graphics.drawImage(rotated, coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, null);
+        graphics.drawOval(coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, 64, 64);
+        graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
     }
 
     public void setOrientation(int o) {

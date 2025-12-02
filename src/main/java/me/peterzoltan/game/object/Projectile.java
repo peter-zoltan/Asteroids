@@ -21,15 +21,12 @@ public class Projectile extends GameObject implements Drawable, Movable {
             System.out.println("Error loading projectile");
         }
         this.orientation = orientation;
-        setLocation(
-            spaceShipX + 20,
-            spaceShipY + 20
-        );
+        setLocation(spaceShipX, spaceShipY);
     }
 
     @Override
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, coordinate.x, coordinate.y, null);
+        graphics.drawImage(image, coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, null);
     }
 
     @Override
