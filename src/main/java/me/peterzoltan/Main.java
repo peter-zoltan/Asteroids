@@ -1,11 +1,8 @@
 package me.peterzoltan;
 
-import me.peterzoltan.frame.GameFrame;
 import me.peterzoltan.frame.MenuFrame;
 
 import java.awt.*;
-
-import static java.lang.Thread.sleep;
 
 public class Main {
 

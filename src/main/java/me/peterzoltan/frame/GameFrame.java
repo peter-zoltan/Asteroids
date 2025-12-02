@@ -172,7 +172,7 @@ public class GameFrame extends JFrame implements KeyListener {
                 planet.registerHit(asteroid.getDamage());
                 asteroidsToBeRemoved.add(asteroid);
                 if (planet.isDestroyed()) {
-                    //dispose();
+                    dispose();
                 }
             }
 

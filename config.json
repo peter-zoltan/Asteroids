@@ -1,0 +1,12 @@
+[
+    {
+        "hitpoints": "1",
+        "name": "hardcore",
+        "weights": {
+            "small": "1",
+            "large": "1",
+            "medium": "1"
+        },
+        "frequency": "1"
+    }
+]
