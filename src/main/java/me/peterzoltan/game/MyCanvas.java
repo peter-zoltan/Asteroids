@@ -10,7 +10,7 @@ public class MyCanvas extends JPanel {
 
     private final Graphics2D graphics;
     private final BufferedImage image;
-    Set<Drawable> drawables = new HashSet<>();
+    List<Drawable> drawables = new ArrayList<>();
 
     public MyCanvas(int width, int height) {
         setSize(new Dimension(width, height));
@@ -24,6 +24,10 @@ public class MyCanvas extends JPanel {
 
     public void addDrawable(Drawable drawable) {
         drawables.add(drawable);
+    }
+
+    public List<Drawable> getDrawables() {
+        return drawables;
     }
 
 

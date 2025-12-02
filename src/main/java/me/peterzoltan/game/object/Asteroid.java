@@ -16,7 +16,7 @@ public class Asteroid extends GameObject implements Drawable, Movable {
     int durability;
     BufferedImage image;
 
-    public Asteroid(Size size) {
+    public Asteroid(int x, int y, int orientation, Size size) {
         String filePath = "";
         switch(size) {
             case SMALL -> {
@@ -37,6 +37,8 @@ public class Asteroid extends GameObject implements Drawable, Movable {
         } catch (IOException e) {
             System.out.println("Error loading asteroid size " + size);
         }
+        setLocation(x, y);
+        this.orientation = orientation;
     }
 
     public void draw(Graphics graphics) {

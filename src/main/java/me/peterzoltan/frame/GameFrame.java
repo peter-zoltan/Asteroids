@@ -25,9 +25,14 @@ public class GameFrame extends JFrame implements KeyListener {
     long lastAsteroid = 0;
     private final Set<Integer> pressedKeys = new HashSet<>();
     public static int tick = 16;
+    int[] weights;
 
-    public GameFrame(String title) {
+    public GameFrame(String title, int[] weights) {
         super(title);
+        if (weights.length != 3) {
+            throw new IllegalArgumentException("Weights must have 3 elements");
+        }
+        this.weights = weights;
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -49,7 +54,9 @@ public class GameFrame extends JFrame implements KeyListener {
         new Timer(tick, e -> {
             addAsteroid();
             for(Projectile projectile : spaceShip.projectiles) {
-                canvas.addDrawable(projectile);
+                if (!canvas.getDrawables().contains(projectile)) {
+                    canvas.addDrawable(projectile);
+                }
             }
             updatePositions();
             canvas.repaint();
@@ -67,9 +74,41 @@ public class GameFrame extends JFrame implements KeyListener {
 
     public void addAsteroid() {
         if (System.currentTimeMillis() - lastAsteroid > 1000) {
-            asteroids.add(
-                new Asteroid(Size.SMALL)
-            );
+
+            Size size;
+            int weightSum = weights[0] + weights[1] + weights[2];
+            int randomWeight = Math.toIntExact(Math.round(Math.random() * weightSum));
+            if (randomWeight < weights[0]) {
+                size = Size.SMALL;
+            } else if (randomWeight < weights[0] + weights[1]) {
+                size = Size.MEDIUM;
+            } else {
+                size = Size.LARGE;
+            }
+
+            int width = getContentPane().getWidth();
+            int height = getContentPane().getHeight();
+            int x = Math.random() > 0.5 ? 0 : getContentPane().getWidth();
+            int y = (int) (Math.random() * getContentPane().getHeight());
+
+            int orientation;
+            if (x == 0) {
+                if (y < height / 2) {
+                    orientation = 180 - (int) Math.toDegrees(Math.atan((double) (width / 2) / ((double) (height / 2) - y)));
+                } else {
+                    orientation = - (int) Math.toDegrees(Math.atan((double) (width / 2) / ((double) (height / 2) - y)));
+                }
+            } else {
+                if (y < getContentPane().getHeight() / 2) {
+                    orientation = 180 + (int) Math.toDegrees(Math.atan((double) (width / 2) / ((double) (height / 2) - y)));
+                } else {
+                    orientation = 360 + (int) Math.toDegrees(Math.atan((double) (width / 2) / ((double) (height / 2) - y)));
+                }
+            }
+
+            Asteroid asteroid = new Asteroid(x, y, orientation, size);
+            asteroids.add(asteroid);
+            canvas.addDrawable(asteroid);
             lastAsteroid = System.currentTimeMillis();
         }
     }

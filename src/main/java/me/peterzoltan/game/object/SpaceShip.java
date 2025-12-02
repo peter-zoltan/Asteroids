@@ -30,6 +30,7 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
             System.out.println("Error loading spaceship");
         }
         setLocation(100, 100);
+        setOrientation(0);
         this.pressedKeys = pressedKeys;
     }
 
