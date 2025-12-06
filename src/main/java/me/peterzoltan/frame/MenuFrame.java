@@ -37,6 +37,7 @@ public class MenuFrame extends JFrame {
     private JTextField largeWeightField;
 
     private List<Difficulty> difficulties = new ArrayList<>();
+    private Difficulty chosenDifficulty = new Difficulty("example", 6, 2, new int[]{1, 1, 1});
 
     public MenuFrame() {
         setSize(400, 200);
@@ -106,8 +107,7 @@ public class MenuFrame extends JFrame {
     }
 
     ActionListener startActionListener = e -> {
-        int[] weights = {1, 2, 3};
-        GameFrame frame = new GameFrame("Game", weights);
+        GameFrame frame = new GameFrame("Game", chosenDifficulty);
         frame.pack();
         frame.setVisible(true);
         SwingUtilities.invokeLater(frame::init);

@@ -1,5 +1,6 @@
 package me.peterzoltan.frame;
 
+import me.peterzoltan.game.Difficulty;
 import me.peterzoltan.game.Movable;
 import me.peterzoltan.game.MyCanvas;
 import me.peterzoltan.game.object.Asteroid;
@@ -36,12 +37,9 @@ public class GameFrame extends JFrame implements KeyListener {
 
     public boolean gameOver = false;
 
-    public GameFrame(String title, int[] weights) {
+    public GameFrame(String title, Difficulty difficulty) {
         super(title);
-        if (weights.length != 3) {
-            throw new IllegalArgumentException("Weights must have 3 elements");
-        }
-        this.weights = weights;
+        this.weights = difficulty.getWeights();
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

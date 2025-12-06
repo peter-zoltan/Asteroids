@@ -42,7 +42,11 @@ public class MyCanvas extends JPanel {
     }
 
     private void paintToBuffer() {
-        graphics.clearRect(0, 0, getWidth(), getHeight());
+        try {
+            graphics.clearRect(0, 0, getWidth(), getHeight());
+        } catch (NullPointerException e) {
+            System.out.println("First draw");
+        }
         for (Drawable drawable : drawables) {
             drawable.draw(graphics);
         }
