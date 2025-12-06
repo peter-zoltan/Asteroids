@@ -1,16 +1,23 @@
 package me.peterzoltan.frame;
 
-import javax.swing.*;
+import me.peterzoltan.game.Difficulty;
+import me.peterzoltan.util.configUtil;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 
 public class MenuFrame extends JFrame {
 
@@ -29,7 +36,7 @@ public class MenuFrame extends JFrame {
     private JTextField mediumWeightField;
     private JTextField largeWeightField;
 
-    private JSONArray jsonArray;
+    private List<Difficulty> difficulties = new ArrayList<>();
 
     public MenuFrame() {
         setSize(400, 200);
@@ -115,15 +122,7 @@ public class MenuFrame extends JFrame {
             settingsPanel.setVisible(false);
             saveButton.setVisible(false);
         } else {
-            try {
-                File configFile = new File("config.json");
-                String jsonString = Files.readString(configFile.toPath());
-                jsonArray = new JSONArray(jsonString);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null,
-                        "Error loading JSON file:\n" + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            difficulties = configUtil.getConfig();
             settingsToggle = true;
             startButton.setVisible(false);
             settingsButton.setText("Menu");
@@ -134,32 +133,23 @@ public class MenuFrame extends JFrame {
     };
 
     ActionListener saveListener = e -> {
-        if (jsonArray == null) {
-            JOptionPane.showMessageDialog(null,
-                    "No JSON file loaded. Click 'Load JSON File' first.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        JSONObject obj = new JSONObject();
-        obj.put("name", nameField.getText());
-        obj.put("hitpoints", hitpointsField.getText());
-        obj.put("frequency", frequencyField.getText());
-
-        JSONObject weights = new JSONObject();
-        weights.put("small", smallWeightField.getText());
-        weights.put("medium", mediumWeightField.getText());
-        weights.put("large", largeWeightField.getText());
-        obj.put("weights", weights);
-
-        jsonArray.put(obj);
 
         try {
-            Files.writeString((new File("config.json")).toPath(), jsonArray.toString(4));
-            JOptionPane.showMessageDialog(null, "Saved to file!");
-        } catch (IOException ex) {
+            configUtil.putDifficulty(
+                    new Difficulty(
+                            nameField.getText(),
+                            parseInt(hitpointsField.getText()),
+                            parseInt(frequencyField.getText()),
+                            new int[]{
+                                    parseInt(smallWeightField.getText()),
+                                    parseInt(mediumWeightField.getText()),
+                                    parseInt(largeWeightField.getText())
+                            }
+                    ));
+            configUtil.saveConfig();
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null,
-                    "Error writing JSON file:\n" + ex.getMessage(),
+                    "Incorrect diffculty format:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     };
