@@ -38,5 +38,15 @@
             "medium": 3
         },
         "frequency": 3
+    },
+    {
+        "hitpoints": 31,
+        "name": "121",
+        "weights": {
+            "small": 4543,
+            "large": 12,
+            "medium": 21
+        },
+        "frequency": 12
     }
 ]

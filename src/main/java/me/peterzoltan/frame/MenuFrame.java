@@ -4,18 +4,23 @@ import me.peterzoltan.game.Difficulty;
 import me.peterzoltan.util.configUtil;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static java.lang.Character.isDigit;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -84,22 +89,27 @@ public class MenuFrame extends JFrame {
 
         settingsPanel.add(new JLabel("Hitpoints:"));
         hitpointsField = new JTextField();
+        hitpointsField.addKeyListener(numberAdapter);
         settingsPanel.add(hitpointsField);
 
         settingsPanel.add(new JLabel("Frequency:"));
         frequencyField = new JTextField();
+        frequencyField.addKeyListener(numberAdapter);
         settingsPanel.add(frequencyField);
 
         settingsPanel.add(new JLabel("Small Weight:"));
         smallWeightField = new JTextField();
+        smallWeightField.addKeyListener(numberAdapter);
         settingsPanel.add(smallWeightField);
 
         settingsPanel.add(new JLabel("Medium Weight:"));
         mediumWeightField = new JTextField();
+        mediumWeightField.addKeyListener(numberAdapter);
         settingsPanel.add(mediumWeightField);
 
         settingsPanel.add(new JLabel("Large Weight:"));
         largeWeightField = new JTextField();
+        largeWeightField.addKeyListener(numberAdapter);
         settingsPanel.add(largeWeightField);
 
         add(settingsPanel);
@@ -133,7 +143,6 @@ public class MenuFrame extends JFrame {
     };
 
     ActionListener saveListener = e -> {
-
         try {
             configUtil.putDifficulty(
                     new Difficulty(
@@ -151,6 +160,15 @@ public class MenuFrame extends JFrame {
             JOptionPane.showMessageDialog(null,
                     "Incorrect diffculty format:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    };
+
+    KeyAdapter numberAdapter = new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();
+            if (!(isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+                e.consume();
+            }
         }
     };
 
