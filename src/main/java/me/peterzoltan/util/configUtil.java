@@ -15,6 +15,17 @@ public class configUtil {
 
     private static JSONArray jsonArray = new JSONArray();
 
+    private static void saveConfig() {
+        try {
+            Files.writeString((new File("config.json")).toPath(), jsonArray.toString(4));
+            //JOptionPane.showMessageDialog(null, "Saved to file!");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Error writing JSON file:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public static List<Difficulty> getConfig() {
         try {
             File configFile = new File("config.json");
@@ -47,13 +58,22 @@ public class configUtil {
         return difficulties;
     }
 
-
     public static void putDifficulty(Difficulty difficulty) {
         if (jsonArray == null) {
             JOptionPane.showMessageDialog(null,
                     "No JSON file loaded. Click 'Load JSON File' first.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonDiff = (JSONObject) jsonArray.get(i);
+            if (jsonDiff.get("name").equals(difficulty.getName())) {
+                JOptionPane.showMessageDialog(null,
+                        "Difficulty with this name already exists.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
         JSONObject diff = new JSONObject();
@@ -68,17 +88,28 @@ public class configUtil {
         diff.put("weights", weights);
 
         jsonArray.put(diff);
+        saveConfig();
     }
 
-    public static void saveConfig() {
-        try {
-            Files.writeString((new File("config.json")).toPath(), jsonArray.toString(4));
-            JOptionPane.showMessageDialog(null, "Saved to file!");
-        } catch (IOException ex) {
+    public static void removeDifficulty(Difficulty difficulty) {
+        if (jsonArray == null) {
             JOptionPane.showMessageDialog(null,
-                    "Error writing JSON file:\n" + ex.getMessage(),
+                    "No JSON file loaded. Click 'Load JSON File' first.",
                     "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        int removeInd = -1;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (jsonArray.getJSONObject(i).get("name").equals(difficulty.getName())) {
+                removeInd = i;
+                break;
+            }
+        }
+        if (removeInd >= 0) {
+            jsonArray.remove(removeInd);
+        }
+        saveConfig();
     }
 
 }

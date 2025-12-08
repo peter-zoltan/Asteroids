@@ -33,16 +33,22 @@ public class GameFrame extends JFrame implements KeyListener {
     long lastAsteroid = 0;
     private final Set<Integer> pressedKeys = new HashSet<>();
     public static int tick = 16;
+
+    int hitpoints;
+    int frequency;
     int[] weights;
 
     public boolean gameOver = false;
 
     public GameFrame(String title, Difficulty difficulty) {
         super(title);
-        this.weights = difficulty.getWeights();
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        frequency = difficulty.getFrequency();
+        hitpoints = difficulty.getHitpoints();
+        weights = difficulty.getWeights();
 
         canvas = new MyCanvas();
         add(canvas, BorderLayout.CENTER);
@@ -52,7 +58,7 @@ public class GameFrame extends JFrame implements KeyListener {
 
         canvas.init();
 
-        planet = new Planet(getContentPane().getWidth() / 2, getContentPane().getHeight() / 2, 6);
+        planet = new Planet(getContentPane().getWidth() / 2, getContentPane().getHeight() / 2, hitpoints);
         spaceShip = new SpaceShip(pressedKeys);
 
         canvas.setSize(getContentPane().getWidth(), getContentPane().getHeight());
@@ -84,7 +90,7 @@ public class GameFrame extends JFrame implements KeyListener {
     }
 
     public void addAsteroid() {
-        if (System.currentTimeMillis() - lastAsteroid > 1000) {
+        if (System.currentTimeMillis() - lastAsteroid > 1000L * frequency) {
 
             Size size;
             int weightSum = weights[0] + weights[1] + weights[2];
