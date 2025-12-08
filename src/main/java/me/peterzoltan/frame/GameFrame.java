@@ -1,47 +1,44 @@
 package me.peterzoltan.frame;
 
 import me.peterzoltan.game.Difficulty;
-import me.peterzoltan.game.Movable;
 import me.peterzoltan.game.MyCanvas;
 import me.peterzoltan.game.object.Asteroid;
 import me.peterzoltan.game.object.Planet;
 import me.peterzoltan.game.object.Projectile;
-import me.peterzoltan.game.object.SpaceShip;
+import me.peterzoltan.game.object.Spaceship;
 import me.peterzoltan.util.Size;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.Thread.sleep;
-
 public class GameFrame extends JFrame implements KeyListener {
 
-    MyCanvas canvas;
-    SpaceShip spaceShip;
-    Planet planet;
-    List<Asteroid> asteroids = new ArrayList<>();
-    long lastAsteroid = 0;
+    private final MyCanvas canvas;
+    private Spaceship spaceship;
+    private Planet planet;
+    private final List<Asteroid> asteroids = new ArrayList<>();
+    private long lastAsteroid = 0;
+
     private final Set<Integer> pressedKeys = new HashSet<>();
-    public static int tick = 16;
 
-    int hitpoints;
-    int frequency;
-    int[] weights;
+    private final int hitpoints;
+    private final int frequency;
+    private final int[] weights;
 
-    public boolean gameOver = false;
-
-    public GameFrame(String title, Difficulty difficulty) {
-        super(title);
+    /**
+     * Sets up a maximized, undecorated frame for the game, that contains the canvas where the game will be drawn.
+     * @param difficulty the difficulty of the sesson, is used to intialize the relevant variables:
+     *                   - Frequency of Asteroids spawning
+     *                   - Hitpoints of the Planet
+     *                   - Distribution of the weights of the Asteroids
+     */
+    public GameFrame(Difficulty difficulty) {
         setExtendedState(MAXIMIZED_BOTH);
         setUndecorated(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -55,42 +52,68 @@ public class GameFrame extends JFrame implements KeyListener {
         add(canvas, BorderLayout.CENTER);
     }
 
+    /**
+     * Initializes the canvas and the game objects that start on it.
+     * Creates and starts the timer that manages actions taken every tick. These actions are:
+     * - Adding a new Asteroid to the Canvas as needed
+     * - Adding the newest Projectile to the Canvas if does not already have it (at most one Projectile can be added per tick)
+     * - Updating the poition of all moving objects
+     * - Checking for collisions between objects
+     * - Calling the Canvas to repaint itself according to the changes
+     */
     public void init() {
-
         canvas.init();
 
         planet = new Planet(hitpoints, getContentPane().getWidth() / 2, getContentPane().getHeight() / 2);
-        spaceShip = new SpaceShip(pressedKeys, getContentPane().getWidth(), getContentPane().getHeight());
+        spaceship = new Spaceship(pressedKeys, getContentPane().getWidth(), getContentPane().getHeight());
 
         canvas.setSize(getContentPane().getWidth(), getContentPane().getHeight());
         canvas.setFocusable(true);
         canvas.addKeyListener(this);
         canvas.addDrawable(planet);
-        canvas.addDrawable(spaceShip);
+        canvas.addDrawable(spaceship);
 
-        new Timer(tick, e -> {
+        new Timer(16, e -> {
             addAsteroid();
-            for(Projectile projectile : spaceShip.projectiles) {
-                if (!canvas.getDrawables().contains(projectile)) {
-                    canvas.addDrawable(projectile);
-                }
-            }
+            addProjectile();
             updatePositions();
             checkCollisions();
             canvas.repaint();
         }).start();
-
     }
 
-    public void updatePositions() {
-        spaceShip.updateProjectiles();
-        spaceShip.updatePosition();
+    /**
+     * Updates the position of all moving objects
+     */
+    private void updatePositions() {
+        spaceship.updateProjectiles();
+        spaceship.updatePosition();
         for (Asteroid asteroid : asteroids) {
             asteroid.updatePosition();
         }
     }
 
-    public void addAsteroid() {
+    /**
+     * Adds the latest Projectile shotby the Spaceship to the Canvas if it has not yet been added.
+     */
+    private void addProjectile() {
+        if (!spaceship.projectiles.isEmpty()) {
+            Projectile newest = spaceship.projectiles.getLast();
+            if (!canvas.getDrawables().contains(newest)) {
+                canvas.addDrawable(newest);
+            }
+        }
+    }
+
+    /**
+     * Adds a new Asteroid to the Canvas if enough time has elapsed since the last one (frequency).
+     * The Asteroid has the following potential size distribution:
+     * - weights[0] / (weights[0] + weights[1] + weights[2]) chance to be a Small one
+     * - weights[1] / (weights[0] + weights[1] + weights[2]) chance to be a Medium one
+     * - weights[2] / (weights[0] + weights[1] + weights[2]) chance to be a Large one
+     * The Asteroid starts from either the left or right side of the screen, at a random height, and moves towards the middle.
+     */
+    private void addAsteroid() {
         if (System.currentTimeMillis() - lastAsteroid > 1000L * frequency) {
 
             Size size;
@@ -131,7 +154,16 @@ public class GameFrame extends JFrame implements KeyListener {
         }
     }
 
-    public void checkCollisions() {
+    /**
+     * Iterates over the objects in the game checking for collisions. On collision the following happen:
+     * - Asteroid & Projectile: The Asteroid loses 1 hitpoint, if this results in it having 0 or less, it is removed.
+     *      The Projectile is removed.
+     * - Asteroid & Planet: The Planet loses hitpoints according to the Asteroid's size, if this results in it having 0
+     *      or less, the game is over. The Asteroid is removed.
+     * - Asteroid & Spaceship: If not already disabled, the Spaceship loses the ability to shoot for a second.
+     * - Other: No action is taken.
+     */
+    private void checkCollisions() {
         Set<Asteroid> asteroidsToBeRemoved = new HashSet<>();
         for (Asteroid asteroid : asteroids) {
 
@@ -141,7 +173,7 @@ public class GameFrame extends JFrame implements KeyListener {
             int aR = asteroid.getRadius();
             Set<Projectile> projectilesToBeRemoved = new HashSet<>();
 
-            for (Projectile projectile : spaceShip.projectiles) {
+            for (Projectile projectile : spaceship.projectiles) {
                 int prX = projectile.getLocation().x;
                 int prY = projectile.getLocation().y;
                 int prR = projectile.getRadius();
@@ -154,7 +186,7 @@ public class GameFrame extends JFrame implements KeyListener {
                     projectilesToBeRemoved.add(projectile);
                 }
             }
-            spaceShip.projectiles.removeAll(projectilesToBeRemoved);
+            spaceship.projectiles.removeAll(projectilesToBeRemoved);
             for (Projectile projectileToBeRemoved : projectilesToBeRemoved) {
                 canvas.removeDrawable(projectileToBeRemoved);
             }
@@ -171,12 +203,12 @@ public class GameFrame extends JFrame implements KeyListener {
                 }
             }
 
-            int sX = spaceShip.getLocation().x;
-            int sY = spaceShip.getLocation().y;
-            int sR = spaceShip.getRadius();
+            int sX = spaceship.getLocation().x;
+            int sY = spaceship.getLocation().y;
+            int sR = spaceship.getRadius();
             distance = Math.sqrt((aX - sX) * (aX - sX) + (aY - sY) * (aY - sY));
             if (distance < aR + sR) {
-                spaceShip.registerHit();
+                spaceship.registerHit();
             }
         }
         asteroids.removeAll(asteroidsToBeRemoved);
@@ -185,14 +217,26 @@ public class GameFrame extends JFrame implements KeyListener {
         }
     }
 
+    /**
+     * Ignored, but all abstract methods of KeyListener have to be implemented.
+     * @param e the event to be processed
+     */
     @Override
     public void keyTyped(KeyEvent e) {}
 
+    /**
+     * The key that has been pressed is added to the set that keeps record of the keys currently being pressed.
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         pressedKeys.add(e.getKeyCode());
     }
 
+    /**
+     * The key that has been released is removed from the set that keeps record of the keys currently being pressed.
+     * @param e the event to be processed
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         pressedKeys.remove(e.getKeyCode());

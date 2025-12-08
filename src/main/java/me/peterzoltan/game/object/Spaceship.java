@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class SpaceShip extends GameObject implements Drawable, Movable {
+public class Spaceship extends GameObject implements Drawable, Movable {
 
     BufferedImage image;
     Set<Integer> pressedKeys;
@@ -27,7 +27,7 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
     int canvasWidth;
     int canvasHeight;
 
-    public SpaceShip(Set<Integer> pressedKeys, int canvasWidth, int canvasHeight) {
+    public Spaceship(Set<Integer> pressedKeys, int canvasWidth, int canvasHeight) {
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
         } catch (IOException e) {

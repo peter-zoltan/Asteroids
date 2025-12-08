@@ -136,7 +136,7 @@ public class MenuFrame extends JFrame {
     }
 
     ActionListener startActionListener = e -> {
-        GameFrame frame = new GameFrame("Asteroids", chosenDifficulty);
+        GameFrame frame = new GameFrame(chosenDifficulty);
         frame.pack();
         frame.setVisible(true);
         SwingUtilities.invokeLater(frame::init);

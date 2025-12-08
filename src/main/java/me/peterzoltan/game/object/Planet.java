@@ -3,7 +3,6 @@ package me.peterzoltan.game.object;
 import me.peterzoltan.game.Drawable;
 import me.peterzoltan.game.GameObject;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,9 +12,9 @@ import java.io.IOException;
 public class Planet extends GameObject implements Drawable {
 
     BufferedImage image;
-    int health;
+    int hitpoints;
 
-    public Planet(int health, int x, int y) {
+    public Planet(int hitpoints, int x, int y) {
         try {
             image = ImageIO.read(new File("src/main/resources/planet-earth.png"));
         } catch (IOException e) {
@@ -23,7 +22,7 @@ public class Planet extends GameObject implements Drawable {
         }
         setLocation(x, y);
         radius = image.getWidth() / 2;
-        this.health = health;
+        this.hitpoints = hitpoints;
     }
 
     public void draw(Graphics graphics) {
@@ -31,11 +30,11 @@ public class Planet extends GameObject implements Drawable {
     }
 
     public void registerHit(int damage) {
-        health -= damage;
+        hitpoints -= damage;
     }
 
     public boolean isDestroyed() {
-        return health < 0;
+        return hitpoints < 0;
     }
 
 }

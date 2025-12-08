@@ -13,22 +13,24 @@ import java.io.IOException;
 
 public class Asteroid extends GameObject implements Drawable, Movable {
 
-    int durability;
+    int hitpoints;
+    Size size;
     BufferedImage image;
 
     public Asteroid(int x, int y, int orientation, Size size) {
         String filePath = "";
+        this.size = size;
         switch(size) {
             case SMALL -> {
-                durability = 1;
+                hitpoints = 1;
                 filePath = "src/main/resources/asteroid_small.png";
             }
             case MEDIUM -> {
-                durability = 2;
+                hitpoints = 2;
                 filePath = "src/main/resources/asteroid_medium.png";
             }
             case LARGE -> {
-                durability = 3;
+                hitpoints = 3;
                 filePath = "src/main/resources/asteroid_large.png";
             }
         }
@@ -55,14 +57,25 @@ public class Asteroid extends GameObject implements Drawable, Movable {
     }
 
     public void registerHit() {
-        durability--;
+        hitpoints--;
     }
 
     public boolean isDestroyed() {
-        return durability == 0;
+        return hitpoints == 0;
     }
 
     public int getDamage() {
-        return durability;
+        switch (size) {
+            case MEDIUM -> {
+                return 2;
+            }
+            case LARGE -> {
+                return 3;
+            }
+            default -> {
+                return 1;
+            }
+        }
     }
+
 }
