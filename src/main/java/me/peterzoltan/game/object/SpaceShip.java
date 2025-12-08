@@ -24,8 +24,10 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
     long lastShot = 0;
     long lastHit = 0;
     long resetTime = 1000;
+    int canvasWidth;
+    int canvasHeight;
 
-    public SpaceShip(Set<Integer> pressedKeys) {
+    public SpaceShip(Set<Integer> pressedKeys, int canvasWidth, int canvasHeight) {
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
         } catch (IOException e) {
@@ -35,18 +37,13 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         setOrientation(0);
         radius = image.getWidth() / 2;
         this.pressedKeys = pressedKeys;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
     }
 
     public void draw(Graphics graphics) {
-        if (System.currentTimeMillis() - lastHit > resetTime) {
-            graphics.setColor(Color.GREEN);
-        } else {
-            graphics.setColor(Color.WHITE);
-        }
         BufferedImage rotated = rotate(image, orientation);
         graphics.drawImage(rotated, coordinate.x - radius, coordinate.y - radius, null);
-        graphics.drawOval(coordinate.x - radius, coordinate.y - radius, radius * 2, radius * 2);
-        graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
     }
 
     public void setOrientation(int o) {
@@ -58,6 +55,24 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         }
     }
 
+    public void setLocationWithBounds(int xOffset, int yOffset) {
+        int x = coordinate.x;
+        int y = coordinate.y;
+        int newX;
+        int newY;
+        if (x + xOffset > canvasWidth || x + xOffset < 0) {
+            newX = x;
+        } else {
+            newX = x + xOffset;
+        }
+        if (y + yOffset > canvasHeight || y + yOffset < 0) {
+            newY = y;
+        } else {
+            newY = y + yOffset;
+        }
+        setLocation(newX, newY);
+    }
+
     @Override
     public void updatePosition() {
         int xOffset = 0;
@@ -65,19 +80,27 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         int orientationOffset = 0;
         for (Integer keyCode : pressedKeys) {
             switch (keyCode) {
-                case KeyEvent.VK_W -> {
+                case KeyEvent.VK_UP -> {
                     xOffset += (int) (Math.sin(Math.toRadians(orientation)) * 12);
                     yOffset -= (int) (Math.cos(Math.toRadians(orientation)) * 12);
                 }
-                case KeyEvent.VK_S -> {
+                case KeyEvent.VK_DOWN -> {
                     xOffset -= (int) (Math.sin(Math.toRadians(orientation)) * 12);
                     yOffset += (int) (Math.cos(Math.toRadians(orientation)) * 12);
                 }
-                case KeyEvent.VK_A -> orientationOffset -= 10;
-                case KeyEvent.VK_D -> orientationOffset += 10;
+                case KeyEvent.VK_LEFT -> {
+                    xOffset -= (int) (Math.sin(Math.toRadians(orientation + 90)) * 12);
+                    yOffset += (int) (Math.cos(Math.toRadians(orientation + 90)) * 12);
+                }
+                case KeyEvent.VK_RIGHT -> {
+                    xOffset += (int) (Math.sin(Math.toRadians(orientation + 90)) * 12);
+                    yOffset -= (int) (Math.cos(Math.toRadians(orientation + 90)) * 12);
+                }
+                case KeyEvent.VK_Q -> orientationOffset -= 10;
+                case KeyEvent.VK_E -> orientationOffset += 10;
             }
         }
-        setLocation(coordinate.x + xOffset, coordinate.y + yOffset);
+        setLocationWithBounds(xOffset, yOffset);
         setOrientation(orientation + orientationOffset);
 
         for (Projectile projectile : projectiles) {
@@ -105,10 +128,6 @@ public class SpaceShip extends GameObject implements Drawable, Movable {
         if (System.currentTimeMillis() - lastHit > resetTime) {
             lastHit = System.currentTimeMillis();
         }
-    }
-
-    public boolean isEnabled() {
-        return System.currentTimeMillis() - lastHit > resetTime;
     }
 
 }

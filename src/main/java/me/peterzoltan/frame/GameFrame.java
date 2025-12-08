@@ -43,6 +43,7 @@ public class GameFrame extends JFrame implements KeyListener {
     public GameFrame(String title, Difficulty difficulty) {
         super(title);
         setExtendedState(MAXIMIZED_BOTH);
+        setUndecorated(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -58,8 +59,8 @@ public class GameFrame extends JFrame implements KeyListener {
 
         canvas.init();
 
-        planet = new Planet(getContentPane().getWidth() / 2, getContentPane().getHeight() / 2, hitpoints);
-        spaceShip = new SpaceShip(pressedKeys);
+        planet = new Planet(hitpoints, getContentPane().getWidth() / 2, getContentPane().getHeight() / 2);
+        spaceShip = new SpaceShip(pressedKeys, getContentPane().getWidth(), getContentPane().getHeight());
 
         canvas.setSize(getContentPane().getWidth(), getContentPane().getHeight());
         canvas.setFocusable(true);
@@ -127,16 +128,6 @@ public class GameFrame extends JFrame implements KeyListener {
             asteroids.add(asteroid);
             canvas.addDrawable(asteroid);
             lastAsteroid = System.currentTimeMillis();
-        }
-    }
-
-    public void cleanUp() {
-        for (Projectile projectile : spaceShip.projectiles) {
-            int x = projectile.getLocation().x;
-            int y = projectile.getLocation().y;
-            if (x < 0 || x > getContentPane().getWidth() || y < 0 || y > getContentPane().getHeight()) {
-                // remove from spaceship and from canvas
-            }
         }
     }
 

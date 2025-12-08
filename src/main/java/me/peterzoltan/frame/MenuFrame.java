@@ -126,7 +126,7 @@ public class MenuFrame extends JFrame {
     private void initializeDefaultDifficulty() {
         Difficulty defaultDiff = new Difficulty(
                 "default",
-                6,
+                9,
                 2,
                 new int[] {1, 1, 1}
         );

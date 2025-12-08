@@ -44,8 +44,6 @@ public class Asteroid extends GameObject implements Drawable, Movable {
 
     public void draw(Graphics graphics) {
         graphics.drawImage(image, coordinate.x - radius, coordinate.y - radius, null);
-        graphics.drawOval(coordinate.x - radius, coordinate.y - radius, radius * 2, radius * 2);
-        graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
     }
 
     @Override

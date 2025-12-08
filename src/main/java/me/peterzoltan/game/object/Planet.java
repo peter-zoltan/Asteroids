@@ -15,7 +15,7 @@ public class Planet extends GameObject implements Drawable {
     BufferedImage image;
     int health;
 
-    public Planet(int x, int y, int health) {
+    public Planet(int health, int x, int y) {
         try {
             image = ImageIO.read(new File("src/main/resources/planet-earth.png"));
         } catch (IOException e) {
@@ -27,9 +27,7 @@ public class Planet extends GameObject implements Drawable {
     }
 
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, null);
-        graphics.drawOval(coordinate.x - image.getWidth() / 2, coordinate.y - image.getHeight() / 2, 256, 256);
-        graphics.drawRect(coordinate.x - 2, coordinate.y - 2, 5, 5);
+        graphics.drawImage(image, coordinate.x - radius, coordinate.y - radius, null);
     }
 
     public void registerHit(int damage) {
