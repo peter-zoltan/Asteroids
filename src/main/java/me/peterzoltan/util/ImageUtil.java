@@ -4,17 +4,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ImageUtil {
-    public static BufferedImage rotate(BufferedImage img, double degrees)
+
+    /**
+     * Rotates the BufferedImage clockwise by the given degrees, produces a new image, the original is unchanged.
+     * @param image the BufferedImage to be rotated.
+     * @param degrees the degrees the BufferedImage is rotated by.
+     * @return the rotated version of the BufferedImage.
+     */
+    public static BufferedImage rotate(BufferedImage image, double degrees)
     {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        int width = image.getWidth();
+        int height = image.getHeight();
 
-        BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+        BufferedImage newImage = new BufferedImage(width, height, image.getType());
 
-        Graphics2D g2 = newImage.createGraphics();
+        Graphics2D graphics = newImage.createGraphics();
 
-        g2.rotate(Math.toRadians(degrees), (double) width / 2, (double) height / 2);
-        g2.drawImage(img, null, 0, 0);
+        graphics.rotate(Math.toRadians(degrees), (double) width / 2, (double) height / 2);
+        graphics.drawImage(image, null, 0, 0);
 
         return newImage;
     }

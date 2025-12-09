@@ -27,7 +27,7 @@ public class Projectile extends GameObject implements Drawable, Movable {
 
     @Override
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, coordinate.x - radius, coordinate.y - radius / 2, null);
+        graphics.drawImage(image, coordinate.x - radius, coordinate.y - radius, null);
     }
 
     @Override

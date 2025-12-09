@@ -15,10 +15,12 @@ public class configUtil {
 
     private static JSONArray jsonArray = new JSONArray();
 
+    /**
+     * Writes the current config to the config.json file.
+     */
     private static void saveConfig() {
         try {
             Files.writeString((new File("config.json")).toPath(), jsonArray.toString(4));
-            //JOptionPane.showMessageDialog(null, "Saved to file!");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null,
                     "Error writing JSON file:\n" + ex.getMessage(),
@@ -26,6 +28,10 @@ public class configUtil {
         }
     }
 
+    /**
+     * Reads the current config from config.json, and translates it to a list of Difficulties.
+     * @return the resulting list of Difficulties.
+     */
     public static List<Difficulty> getConfig() {
         try {
             File configFile = new File("config.json");
@@ -58,6 +64,11 @@ public class configUtil {
         return difficulties;
     }
 
+    /**
+     * Adds a Difficulty to the JSONArray and writes the changes to config.json, if one with the same name doesn't
+     * already exist.
+     * @param difficulty the difficulty to be written to file.
+     */
     public static void putDifficulty(Difficulty difficulty) {
         if (jsonArray == null) {
             JOptionPane.showMessageDialog(null,
@@ -91,6 +102,11 @@ public class configUtil {
         saveConfig();
     }
 
+    /**
+     * Removes the first Difficulty with the same name as the parameter from the JSONArray and writes the changes to
+     * config.json.
+     * @param difficulty the Difficulty to be removed.
+     */
     public static void removeDifficulty(Difficulty difficulty) {
         if (jsonArray == null) {
             JOptionPane.showMessageDialog(null,

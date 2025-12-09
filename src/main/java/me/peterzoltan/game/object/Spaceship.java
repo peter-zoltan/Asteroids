@@ -27,6 +27,12 @@ public class Spaceship extends GameObject implements Drawable, Movable {
     int canvasWidth;
     int canvasHeight;
 
+    /**
+     * Loads the image that is used to draw the Spaceship, and sets it's variables.
+     * @param pressedKeys the set that keeps record of the keys currently being pressed.
+     * @param canvasWidth the width of the canvas the game is drawn on.
+     * @param canvasHeight the height of the canvas the game is drawn on.
+     */
     public Spaceship(Set<Integer> pressedKeys, int canvasWidth, int canvasHeight) {
         try {
             image = ImageIO.read(new File("src/main/resources/spaceship.png"));
@@ -41,11 +47,20 @@ public class Spaceship extends GameObject implements Drawable, Movable {
         this.canvasHeight = canvasHeight;
     }
 
+    /**
+     * Draws image rotated by orientation to the Graphics object passed as a parameter.
+     * Radius is subtracted from the coordinates so that coordinate is at the center of the image.
+     * @param graphics the Graphics object to which it will draw onto.
+     */
     public void draw(Graphics graphics) {
         BufferedImage rotated = rotate(image, orientation);
         graphics.drawImage(rotated, coordinate.x - radius, coordinate.y - radius, null);
     }
 
+    /**
+     * Sets orientation to the value passed as a parameter. Overflows in both directions at 0 and 360 respectively.
+     * @param o orientation will be set to this.
+     */
     public void setOrientation(int o) {
         orientation = o;
         if (orientation < 0) {
@@ -55,6 +70,12 @@ public class Spaceship extends GameObject implements Drawable, Movable {
         }
     }
 
+    /**
+     * Sets the new location of the Spaceship, making sure that it stays within the bounds of the Canvas.
+     * If it would go out of bounds along an axis, it keeps it's previous position along that one.
+     * @param xOffset the amount x is to be changed by.
+     * @param yOffset the amount y is to be changed by.
+     */
     public void setLocationWithBounds(int xOffset, int yOffset) {
         int x = coordinate.x;
         int y = coordinate.y;
@@ -73,6 +94,12 @@ public class Spaceship extends GameObject implements Drawable, Movable {
         setLocation(newX, newY);
     }
 
+    /**
+     * Updates the Spaceship's and it's Projectiles' position.
+     * The arrow keys move it along it's own x and y axis (decided by orientation).
+     * The Q and E keys respectively decrement and increment it's orientation.
+     * Iterates over the Projectiles and calls their functions to handle the change in position.
+     */
     @Override
     public void updatePosition() {
         int xOffset = 0;
@@ -108,6 +135,11 @@ public class Spaceship extends GameObject implements Drawable, Movable {
         }
     }
 
+    /**
+     * If enough time has passed since the last Projectile was fired and Spacebar is curently pressed, and the Spaceship
+     * is capable of shooting (enough time has passed since last hit registered), it shoots a new Projectile, and
+     * records the time of the shot.
+     */
     public void updateProjectiles() {
         if (System.currentTimeMillis() - lastHit <= resetTime) {
             return;
@@ -124,6 +156,9 @@ public class Spaceship extends GameObject implements Drawable, Movable {
         }
     }
 
+    /**
+     * If the Spaceship can currently shoot Projectiles that ability is disabled for a given time.
+     */
     public void registerHit() {
         if (System.currentTimeMillis() - lastHit > resetTime) {
             lastHit = System.currentTimeMillis();

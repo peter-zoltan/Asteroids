@@ -62,7 +62,6 @@ public class GameFrame extends JFrame implements KeyListener {
      * - Calling the Canvas to repaint itself according to the changes
      */
     public void init() {
-        canvas.init();
 
         planet = new Planet(hitpoints, getContentPane().getWidth() / 2, getContentPane().getHeight() / 2);
         spaceship = new Spaceship(pressedKeys, getContentPane().getWidth(), getContentPane().getHeight());
@@ -72,6 +71,8 @@ public class GameFrame extends JFrame implements KeyListener {
         canvas.addKeyListener(this);
         canvas.addDrawable(planet);
         canvas.addDrawable(spaceship);
+
+        canvas.init();
 
         new Timer(16, e -> {
             addAsteroid();
@@ -94,7 +95,7 @@ public class GameFrame extends JFrame implements KeyListener {
     }
 
     /**
-     * Adds the latest Projectile shotby the Spaceship to the Canvas if it has not yet been added.
+     * Adds the latest Projectile shot by the Spaceship to the Canvas if it has not yet been added.
      */
     private void addProjectile() {
         if (!spaceship.projectiles.isEmpty()) {
@@ -167,7 +168,7 @@ public class GameFrame extends JFrame implements KeyListener {
         Set<Asteroid> asteroidsToBeRemoved = new HashSet<>();
         for (Asteroid asteroid : asteroids) {
 
-            double distance = 0;
+            double distance;
             int aX = asteroid.getLocation().x;
             int aY = asteroid.getLocation().y;
             int aR = asteroid.getRadius();
