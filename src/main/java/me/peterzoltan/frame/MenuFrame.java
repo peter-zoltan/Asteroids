@@ -37,9 +37,14 @@ public class MenuFrame extends JFrame {
     private Difficulty chosenDifficulty;
     JLabel chosenLabel;
 
+    /**
+     * Sets up the Frame, initializing all of it's Components.
+     * Contains a BoxLayout with it's direct components in a cloumn aligned to the center.
+     * @param title the title of the Frame to be displayed.
+     */
     public MenuFrame(String title) {
         super(title);
-        setSize(400, 200);
+        setSize(400, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
@@ -61,6 +66,7 @@ public class MenuFrame extends JFrame {
         menuBar.add(presets);
         add(menuBar);
 
+        difficulties = configUtil.getConfig();
         initializeDefaultDifficulty();
 
         chosenLabel = new JLabel("Chosen difficulty: " + chosenDifficulty.getName());
@@ -77,7 +83,7 @@ public class MenuFrame extends JFrame {
         buttonPanel.add(removeButton);
         removeButton.setVisible(false);
 
-        saveButton = new JButton("Save to JSON");
+        saveButton = new JButton("Save");
         saveButton.addActionListener(saveListener);
         buttonPanel.add(saveButton);
         saveButton.setVisible(false);
@@ -86,6 +92,10 @@ public class MenuFrame extends JFrame {
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
+    /**
+     * Initializes the Panel where the new Difficulties can be put in.
+     * Contains a GridLayoit with two columns and an unspecified amount of rows (6 in practice).
+     */
     private void initializeSettingsPanel() {
 
         settingsPanel = new JPanel(new GridLayout(0, 2, 5, 5));
@@ -123,7 +133,19 @@ public class MenuFrame extends JFrame {
         settingsPanel.setVisible(false);
     }
 
+    /**
+     * Initializes a default Difficulty if it does not already exist so that a game can be started without setting one.
+     * Sets chosenDifficulty to the default one.
+     */
     private void initializeDefaultDifficulty() {
+        if(!difficulties.isEmpty()) {
+            for (Difficulty difficulty : difficulties) {
+                if (difficulty.getName().equals("default")) {
+                    chosenDifficulty = difficulty;
+                    return;
+                }
+            }
+        }
         Difficulty defaultDiff = new Difficulty(
                 "default",
                 9,
@@ -135,6 +157,9 @@ public class MenuFrame extends JFrame {
         chosenDifficulty = defaultDiff;
     }
 
+    /**
+     * On clicking the start button starts the game in a new Frame with the chosen Difficulty.
+     */
     ActionListener startActionListener = e -> {
         GameFrame frame = new GameFrame(chosenDifficulty);
         frame.pack();
@@ -142,6 +167,9 @@ public class MenuFrame extends JFrame {
         SwingUtilities.invokeLater(frame::init);
     };
 
+    /**
+     * On clicking the settings button the settings are either revealed or hidden.
+     */
     ActionListener settingsActionListener = e -> {
         if (settingsToggle) {
             settingsToggle = false;
@@ -153,6 +181,7 @@ public class MenuFrame extends JFrame {
             buttonPanel.setVisible(false);
             saveButton.setVisible(false);
             removeButton.setVisible(false);
+            setSize(400, 100);
         } else {
             difficulties = configUtil.getConfig();
             setMenuItems();
@@ -165,37 +194,13 @@ public class MenuFrame extends JFrame {
             buttonPanel.setVisible(true);
             saveButton.setVisible(true);
             removeButton.setVisible(true);
+            setSize(400, 300);
         }
     };
 
-    ActionListener saveListener = e -> {
-        try {
-            Difficulty difficulty = new Difficulty(
-                    nameField.getText(),
-                    parseInt(hitpointsField.getText()),
-                    parseInt(frequencyField.getText()),
-                    new int[]{
-                            parseInt(smallWeightField.getText()),
-                            parseInt(mediumWeightField.getText()),
-                            parseInt(largeWeightField.getText())
-                    }
-            );
-            configUtil.putDifficulty(difficulty);
-            difficulties.add(difficulty);
-            presets.add(new JMenuItem(difficulty.getName()));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Incorrect diffculty format:\n" + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    };
-
-    ActionListener removeListener = e -> {
-        configUtil.removeDifficulty(chosenDifficulty);
-        difficulties.remove(chosenDifficulty);
-        setMenuItems();
-    };
-
+    /**
+     * Sets the Difficulty with the same name as the clicked MenuItem s the chosenDifficulty, and adjust the label.
+     */
     ActionListener menuItemListener = e -> {
         JMenuItem selected = (JMenuItem) e.getSource();
         String name = selected.getText();
@@ -207,6 +212,88 @@ public class MenuFrame extends JFrame {
         chosenLabel.setText("Chosen difficulty: " + chosenDifficulty.getName());
     };
 
+    /**
+     * Adds a new Difficulty with the configuration put in to the list of Difficulties and saves it to config.json.
+     * Checks for unallowed 0 values and duplicate names.
+     */
+    ActionListener saveListener = e -> {
+        try {
+            int wSmall = parseInt(smallWeightField.getText());
+            int wMedium = parseInt(mediumWeightField.getText());
+            int wLarge = parseInt(largeWeightField.getText());
+            if (wSmall + wMedium + wLarge == 0) {
+                JOptionPane.showMessageDialog(null,
+                        "All weights can't be 0",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int hitpoints = parseInt(hitpointsField.getText());
+            if (hitpoints == 0) {
+                JOptionPane.showMessageDialog(null,
+                        "Hitpoints can't be 0",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int frequency = parseInt(frequencyField.getText());
+            if (frequency == 0) {
+                JOptionPane.showMessageDialog(null,
+                        "Frequency can't be 0",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Difficulty difficulty = new Difficulty(
+                    nameField.getText(),
+                    hitpoints,
+                    frequency,
+                    new int[]{
+                            wSmall,
+                            wMedium,
+                            wLarge
+                    }
+            );
+            for (Difficulty difficulty1 : difficulties) {
+                if (difficulty1.getName().equals(difficulty.getName())) {
+                    JOptionPane.showMessageDialog(null,
+                            "Difficulty with this name already exists.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            configUtil.putDifficulty(difficulty);
+            difficulties.add(difficulty);
+            JMenuItem item = new JMenuItem(difficulty.getName());
+            item.addActionListener(menuItemListener);
+            presets.add(item);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Incorrect diffculty format:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    };
+
+    /**
+     * Removes the chosenDifficulty from config.json and the list of Difficulties, and set the chosenDifficulty to the
+     * default, and adjust the label.
+     * Cannot remove the default Difficulty.
+     */
+    ActionListener removeListener = e -> {
+        if (chosenDifficulty.getName().equals("default")) {
+            return;
+        }
+        configUtil.removeDifficulty(chosenDifficulty);
+        difficulties.remove(chosenDifficulty);
+        for (Difficulty difficulty : difficulties) {
+            if (difficulty.getName().equals("default")) {
+                chosenDifficulty = difficulty;
+                chosenLabel.setText("Chosen difficulty: " + chosenDifficulty.getName());
+            }
+        }
+        setMenuItems();
+    };
+
+    /**
+     * Only allows digits to be typed. Allows for deletion.
+     */
     KeyAdapter numberAdapter = new KeyAdapter() {
         public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();
@@ -216,6 +303,9 @@ public class MenuFrame extends JFrame {
         }
     };
 
+    /**
+     * Resets and reinitializes the MenuItems of the Menu that shows the Difficulties.
+     */
     private void setMenuItems() {
         presets.removeAll();
         for (Difficulty difficulty : difficulties) {

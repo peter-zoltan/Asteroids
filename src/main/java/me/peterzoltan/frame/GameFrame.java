@@ -118,8 +118,9 @@ public class GameFrame extends JFrame implements KeyListener {
         if (System.currentTimeMillis() - lastAsteroid > 1000L * frequency) {
 
             Size size;
-            int weightSum = weights[0] + weights[1] + weights[2];
-            int randomWeight = Math.toIntExact(Math.round(Math.random() * weightSum));
+            double[] w = {(double) weights[0], (double) weights[1], (double) weights[2]};
+            double weightSum = w[0] + w[1] + w[2];
+            double randomWeight = (Math.random() * weightSum);
             if (randomWeight < weights[0]) {
                 size = Size.SMALL;
             } else if (randomWeight < weights[0] + weights[1]) {
